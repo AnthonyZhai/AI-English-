@@ -1326,15 +1326,35 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
             <div className="kp-left-col">
               <div className="kp-video-wrapper">
                 {videoUrl && (
-                  <video
-                    ref={videoRef}
-                    src={videoUrl}
-                    className="kp-video"
-                    playsInline
-                    onClick={togglePlay}
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)}
-                  />
+                  <>
+                    <video
+                      ref={videoRef}
+                      src={videoUrl}
+                      className="kp-video"
+                      playsInline
+                      onClick={() => { if (!isEditMode) togglePlay(); }}
+                      onPlay={() => setIsPlaying(true)}
+                      onPause={() => setIsPlaying(false)}
+                      onMouseDown={handleVideoMouseDown}
+                      onMouseMove={handleVideoMouseMove}
+                      onMouseUp={handleVideoMouseUp}
+                      onMouseLeave={handleVideoMouseUp}
+                      style={{
+                        objectPosition: `calc(50% - ${videoPan.x}px) calc(0% - ${videoPan.y}px)`,
+                        cursor: isEditMode ? 'grab' : 'pointer',
+                        border: isEditMode ? '4px dashed #ffb400' : 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                    {isEditMode && (
+                      <div style={{
+                        position: 'absolute', top: 15, left: 15, background: 'rgba(255, 180, 0, 0.9)', 
+                        color: '#000', padding: '6px 12px', borderRadius: 6, fontWeight: 'bold', fontSize: 13, pointerEvents: 'none'
+                      }}>
+                        🛠 编辑拖拽中...
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
