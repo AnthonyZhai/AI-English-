@@ -90,11 +90,11 @@ export default function AudioExtractor() {
       const { storageId } = await uploadRes.json();
       console.log('Convex Storage 上传完成, storageId:', storageId);
 
-      // 3. 调用 Convex action: qwen-asr + Qwen 词汇分析
+      // 3. 调用 Convex action: Groq Whisper ASR + Qwen 词汇分析
       const result = await processAudio({ storageId });
 
       if (result.success) {
-        console.log('qwen-asr + Qwen 全流水线完成！', result);
+        console.log('Groq Whisper + Qwen 全流水线完成！', result);
         setProcessingState('saving');
 
         // Save to IndexedDB: convert File to ArrayBuffer
@@ -178,8 +178,8 @@ export default function AudioExtractor() {
             <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
             <FileAudio className="w-8 h-8 text-indigo-600 absolute" />
           </div>
-          <h3 className="text-indigo-700 font-semibold">提取成功！qwen-asr 云端识别中...</h3>
-          <p className="text-indigo-400 text-xs">Convex Storage → qwen-asr 语音识别 → Qwen 词汇分析</p>
+          <h3 className="text-indigo-700 font-semibold">提取成功！Groq Whisper 云端识别中...</h3>
+          <p className="text-indigo-400 text-xs">Convex Storage → Groq Whisper 语音识别 → Qwen 词汇分析</p>
         </div>
       )}
 
