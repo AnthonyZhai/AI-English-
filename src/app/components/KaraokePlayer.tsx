@@ -1242,16 +1242,16 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
               
               {/* Xiaohongshu 3:4 Mobile Safe Zone Overlay */}
               <div style={{
-                position: 'absolute', top: 120, left: 0, width: 540, height: 720,
-                border: '3px dashed rgba(255,36,66,0.8)', pointerEvents: 'none', zIndex: 999,
-                display: 'flex', justifyContent: 'center', alignItems: 'center'
+                position: 'absolute', top: 0, left: 0, width: 540, height: 720,
+                border: '4px dashed rgba(255,36,66,0.9)', pointerEvents: 'none', zIndex: 999
               }}>
                 <div style={{
-                  position: 'absolute', top: -32, left: '50%', transform: 'translateX(-50%)',
+                  position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
                   background: 'rgba(255,36,66,0.9)', color: '#fff', fontSize: '14px',
-                  padding: '4px 12px', borderRadius: '6px', fontWeight: 'bold', whiteSpace: 'nowrap'
+                  padding: '4px 12px', borderRadius: '6px', fontWeight: 'bold', whiteSpace: 'nowrap',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
                 }}>
-                  📸 手机小红书展示安全区（请截图此框内）
+                  📸 手机小红书展示安全比例 (3:4)，请截取此虚线框内的所有元素
                 </div>
               </div>
 
