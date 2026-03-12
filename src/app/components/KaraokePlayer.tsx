@@ -480,7 +480,11 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
 
         // Auto-scroll lyrics to active word
         if (!hadActive) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const container = el.closest('.kp-lyrics-container') as HTMLElement;
+          if (container) {
+            const topPos = el.offsetTop - (container.offsetHeight / 2) + (el.offsetHeight / 2);
+            container.scrollTo({ top: topPos, behavior: 'smooth' });
+          }
         }
       } else if (newState === 'passed') {
         el.classList.add('passed');
@@ -494,7 +498,12 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
       lastHighlightedVocabRef.current = currentActiveVocabKey;
       const vocabEl = document.getElementById('vocab-card-' + currentActiveVocabKey.replace(/[^a-z]/g, ''));
       if (vocabEl) {
-        vocabEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const listContainer = vocabEl.closest('.kp-vocab-list') as HTMLElement;
+        if (listContainer) {
+          const topPos = vocabEl.offsetTop - (listContainer.offsetHeight / 2) + (vocabEl.offsetHeight / 2);
+          listContainer.scrollTo({ top: topPos, behavior: 'smooth' });
+        }
+        
         vocabEl.style.transform = 'scale(1.05)';
         vocabEl.style.boxShadow = '0 6px 12px rgba(0,0,0,0.2)';
         setTimeout(() => {
@@ -1233,7 +1242,7 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
       {/* Hidden canvas for recording */}
       <canvas ref={canvasRef} width={720} height={960} style={{ display: 'none' }} />
 
-      <div style={{ display: 'flex', flexDirection: 'row', gap: '40px', alignItems: 'flex-start', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '100px', alignItems: 'flex-start', justifyContent: 'center', flexWrap: 'nowrap', width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
         {/* --- Left Column: Video & Controls --- */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {/* Paper wrapper */}
@@ -1405,15 +1414,17 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
 
       {/* --- Right Column: Xiaohongshu Copy Area --- */}
       {xiaohongshuCopy ? (
-        <div style={{ width: '100%', maxWidth: 450, display: 'flex', flexDirection: 'column', background: '#fff', padding: 24, borderRadius: 16, boxShadow: '0 4px 15px rgba(0,0,0,0.2)' }}>
-          <h2 style={{ fontSize: 20, fontWeight: 'bold', color: '#be2121', marginBottom: 16, borderBottom: '2px solid #f1f2f6', paddingBottom: 10 }}>📝 小红书爆款文案</h2>
+        <div style={{ flex: '1', minWidth: '400px', maxWidth: '500px', display: 'flex', flexDirection: 'column', background: '#fff', padding: 30, borderRadius: 20, boxShadow: '0 8px 30px rgba(0,0,0,0.15)' }}>
+          <h2 style={{ fontSize: 24, fontWeight: 'bold', color: '#be2121', marginBottom: 24, borderBottom: '2px solid #f1f2f6', paddingBottom: 15 }}>
+            📝 小红书爆款文案
+          </h2>
           <textarea
             readOnly
             value={xiaohongshuCopy}
             style={{
-              width: '100%', height: 400, padding: 12, borderRadius: 8, border: '1px solid #ddd',
-              fontSize: 15, fontFamily: 'sans-serif', color: '#333', resize: 'vertical', lineHeight: 1.5,
-              marginBottom: 16, backgroundColor: '#f9f9f9'
+              width: '100%', height: 600, padding: 20, borderRadius: 12, border: '1px solid #ddd',
+              fontSize: 16, fontFamily: 'sans-serif', color: '#333', resize: 'vertical', lineHeight: 1.6,
+              marginBottom: 20, backgroundColor: '#f9f9f9'
             }}
           />
           <button
