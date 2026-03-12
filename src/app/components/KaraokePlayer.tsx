@@ -804,7 +804,7 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
 
     // Pre-calculate lyrics layout
     const LAYOUT_WIDTH = LEFT_COL_WIDTH - 30; // 15px padding each side
-    const layout = [];
+    const layout: any[] = [];
     const ctxLayout = document.createElement('canvas').getContext('2d')!;
 
     // Pass 1: Layout text
@@ -812,8 +812,8 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
         let currentX = 0;
         let currentY = 0;
         let lineHeight = 35; // base line height
-        const lines = [];
-        let currentLine = [];
+        const lines: any[] = [];
+        let currentLine: any[] = [];
 
         ctxLayout.font = '500 20px Arial';
 
@@ -904,7 +904,7 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
 
         // Add Chinese paragraph
         ctxLayout.font = 'bold 16px "PingFang SC", "Microsoft YaHei", sans-serif';
-        const zhLines = [];
+        const zhLines: any[] = [];
         let zhX = 8; // indent for border
         let zhY = currentY + 10;
         let zhLine = '';

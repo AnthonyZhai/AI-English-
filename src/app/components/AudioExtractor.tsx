@@ -72,7 +72,7 @@ export default function AudioExtractor() {
       await ffmpeg.exec(['-i', inputName, '-vn', '-acodec', 'libmp3lame', '-q:a', '9', outputName]);
 
       const fileData = await ffmpeg.readFile(outputName);
-      const data = new Uint8Array(fileData as ArrayBuffer);
+      const data = new Uint8Array(fileData as any);
       const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
 
       setProcessingState('uploading');
