@@ -27,7 +27,7 @@ const KARAOKE_CSS = `
   }
 
   .kp-phone {
-    width: 540px; height: 960px;
+    width: 720px; height: 960px;
     background-color: #ffffff;
     display: flex; flex-direction: column;
     overflow: hidden; position: relative;
@@ -546,7 +546,7 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
     };
 
     // Pre-calculate rendering constants
-    const CANVAS_WIDTH = 540;
+    const CANVAS_WIDTH = 720;
     const CANVAS_HEIGHT = 960;
     const LEFT_COL_WIDTH = CANVAS_WIDTH * (6.2 / 10);
     const RIGHT_COL_WIDTH = CANVAS_WIDTH * (3.8 / 10);
@@ -1231,7 +1231,7 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
       <style dangerouslySetInnerHTML={{ __html: KARAOKE_CSS }} />
 
       {/* Hidden canvas for recording */}
-      <canvas ref={canvasRef} width={540} height={960} style={{ display: 'none' }} />
+      <canvas ref={canvasRef} width={720} height={960} style={{ display: 'none' }} />
 
       <div style={{ display: 'flex', flexDirection: 'row', gap: '40px', alignItems: 'flex-start', justifyContent: 'center', flexWrap: 'wrap' }}>
         {/* --- Left Column: Video & Controls --- */}
@@ -1239,21 +1239,6 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
           {/* Paper wrapper */}
           <div className="kp-paper-wrapper">
             <div className="kp-phone" ref={phoneRef}>
-              
-              {/* Xiaohongshu 3:4 Mobile Safe Zone Overlay */}
-              <div style={{
-                position: 'absolute', top: 0, left: 0, width: 540, height: 720,
-                border: '4px dashed rgba(255,36,66,0.9)', pointerEvents: 'none', zIndex: 999
-              }}>
-                <div style={{
-                  position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
-                  background: 'rgba(255,36,66,0.9)', color: '#fff', fontSize: '14px',
-                  padding: '4px 12px', borderRadius: '6px', fontWeight: 'bold', whiteSpace: 'nowrap',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-                }}>
-                  📸 手机小红书展示安全比例 (3:4)，请截取此虚线框内的所有元素
-                </div>
-              </div>
 
           {/* Top header */}
           <div className="kp-top-header">
