@@ -1233,9 +1233,27 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
       {/* Hidden canvas for recording */}
       <canvas ref={canvasRef} width={540} height={960} style={{ display: 'none' }} />
 
-      {/* Paper wrapper */}
-      <div className="kp-paper-wrapper">
-        <div className="kp-phone" ref={phoneRef}>
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '40px', alignItems: 'flex-start', justifyContent: 'center', flexWrap: 'wrap' }}>
+        {/* --- Left Column: Video & Controls --- */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {/* Paper wrapper */}
+          <div className="kp-paper-wrapper">
+            <div className="kp-phone" ref={phoneRef}>
+              
+              {/* Xiaohongshu 3:4 Mobile Safe Zone Overlay */}
+              <div style={{
+                position: 'absolute', top: 120, left: 0, width: 540, height: 720,
+                border: '3px dashed rgba(255,36,66,0.8)', pointerEvents: 'none', zIndex: 999,
+                display: 'flex', justifyContent: 'center', alignItems: 'center'
+              }}>
+                <div style={{
+                  position: 'absolute', top: -32, left: '50%', transform: 'translateX(-50%)',
+                  background: 'rgba(255,36,66,0.9)', color: '#fff', fontSize: '14px',
+                  padding: '4px 12px', borderRadius: '6px', fontWeight: 'bold', whiteSpace: 'nowrap'
+                }}>
+                  📸 手机小红书展示安全区（请截图此框内）
+                </div>
+              </div>
 
           {/* Top header */}
           <div className="kp-top-header">
@@ -1398,10 +1416,21 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
           {recordingProgress} — 播放完毕后自动下载
         </div>
       )}
+      </div> {/* End Left Column */}
 
-      {/* Xiaohongshu Copy Area */}
-      {xiaohongshuCopy && (
-        <div style={{ marginTop: 24, width: '100%', maxWidth: 540, display: 'flex', flexDirection: 'column' }}>
+      {/* --- Right Column: Xiaohongshu Copy Area --- */}
+      {xiaohongshuCopy ? (
+        <div style={{ width: '100%', maxWidth: 450, display: 'flex', flexDirection: 'column', background: '#fff', padding: 24, borderRadius: 16, boxShadow: '0 4px 15px rgba(0,0,0,0.2)' }}>
+          <h2 style={{ fontSize: 20, fontWeight: 'bold', color: '#be2121', marginBottom: 16, borderBottom: '2px solid #f1f2f6', paddingBottom: 10 }}>📝 小红书爆款文案</h2>
+          <textarea
+            readOnly
+            value={xiaohongshuCopy}
+            style={{
+              width: '100%', height: 400, padding: 12, borderRadius: 8, border: '1px solid #ddd',
+              fontSize: 15, fontFamily: 'sans-serif', color: '#333', resize: 'vertical', lineHeight: 1.5,
+              marginBottom: 16, backgroundColor: '#f9f9f9'
+            }}
+          />
           <button
             onClick={(e) => {
               navigator.clipboard.writeText(xiaohongshuCopy);
@@ -1411,23 +1440,22 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
               setTimeout(() => { target.textContent = oldText; }, 3000);
             }}
             style={{
-              padding: '10px 15px', border: 'none', borderRadius: 8,
+              padding: '12px 15px', border: 'none', borderRadius: 8,
               fontSize: 16, fontWeight: 'bold', backgroundColor: '#2b8a3e',
-              color: '#fff', cursor: 'pointer', marginBottom: 10, alignSelf: 'center'
+              color: '#fff', cursor: 'pointer', alignSelf: 'stretch',
+              boxShadow: '0 4px 10px rgba(43,138,62,0.3)', transition: 'all 0.2s'
             }}
           >
-            📋 复制小红书文案
+            📋 一键复制小红书文案
           </button>
-          <textarea
-            readOnly
-            value={xiaohongshuCopy}
-            style={{
-              width: '100%', height: 300, padding: 12, borderRadius: 8, border: '1px solid #ccc',
-              fontSize: 14, fontFamily: 'sans-serif', color: '#333', resize: 'vertical'
-            }}
-          />
+        </div>
+      ) : (
+        <div style={{ width: 450, padding: 24, textAlign: 'center', color: '#999', alignSelf: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: 16 }}>
+          文案正在生成或未找到...
         </div>
       )}
+
+      </div> {/* End Flex Row Layout */}
     </div>
   );
 }
