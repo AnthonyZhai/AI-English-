@@ -88,7 +88,7 @@ export async function POST(req: Request) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            model: "qwen-plus",
+            model: "qwen3.5-plus",
             messages: [
                 { role: "system", content: "你必须永远只输出 JSON 格式文本。" },
                 { role: "user", content: qwenPrompt }

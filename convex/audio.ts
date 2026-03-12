@@ -163,7 +163,7 @@ export const processAudio = action({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "qwen-plus",
+          model: "qwen3.5-plus",
           messages: [
             { role: "system", content: "你必须只输出纯JSON，不要包含任何Markdown标记、解释或多余文字。" },
             { role: "user", content: qwenPrompt },

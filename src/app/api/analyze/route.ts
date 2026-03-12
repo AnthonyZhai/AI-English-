@@ -130,7 +130,7 @@ Return ONLY valid JSON (no markdown, no explanation):
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'qwen-plus',
+          model: 'qwen3.5-plus',
           messages: [
             { role: 'system', content: 'You must output ONLY valid JSON. No markdown, no explanation.' },
             { role: 'user', content: qwenPrompt },
