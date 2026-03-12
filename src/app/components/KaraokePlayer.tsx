@@ -1421,7 +1421,7 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
       </div>
 
       {/* Controls */}
-      <div style={{ display: 'flex', gap: 16, marginTop: 24 }}>
+      <div style={{ display: 'flex', gap: 16, marginTop: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
         <button
           onClick={togglePlay}
           disabled={isRecording}
@@ -1433,6 +1433,19 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
           }}
         >
           {isPlaying ? '⏸ 暂停' : '▶ 点击播放'}
+        </button>
+
+        <button
+          onClick={() => setIsEditMode(prev => !prev)}
+          disabled={isRecording}
+          style={{
+            padding: '15px 20px', border: 'none', borderRadius: 8,
+            fontSize: 18, fontWeight: 'bold', backgroundColor: isEditMode ? '#ffb400' : '#4b5563',
+            color: isEditMode ? '#000' : '#fff', cursor: 'pointer', boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+            opacity: isRecording ? 0.5 : 1, transition: 'all 0.2s'
+          }}
+        >
+          {isEditMode ? '✅ 退出视频位置拖拽' : '🛠 开启视频位置拖拽'}
         </button>
 
         {!isRecording ? (
