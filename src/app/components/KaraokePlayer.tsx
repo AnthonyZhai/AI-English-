@@ -442,6 +442,9 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [videoPan, setVideoPan] = useState({ x: 0, y: 0 });
   const videoPanRef = useRef({ x: 0, y: 0 });
+
+  const [videoZoom, setVideoZoom] = useState(1);
+  const videoZoomRef = useRef(1);
   
   const isDraggingVideoRef = useRef(false);
   const dragStartPosRef = useRef({ x: 0, y: 0 });
@@ -470,14 +473,11 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
     const dy = e.clientY - dragStartPosRef.current.y;
     
     setVideoPan(prev => {
-      // Subtracting dx/dy so dragging left (negative dx) moves the image left (which requires a positive offset or negative depending on how the CSS is set up. Let's fix the math here).
-      // actually if we subtract dx, when we move left (dx is negative), prev.x - (-dx) = prev.x + |dx|
-      // we want mouse left (dx<0) to move image left.
-      // So if mouse left, we want objectPosition to move left.
-      // objectPosition: calc(50% - videoPan.x px)
-      // therefore to move left we need videoPan.x to INCREASE.
-      // so if dx < 0 (left), we need videoPan.x to increase -> so subtract dx.
-      const next = { x: prev.x - dx, y: prev.y - dy };
+      // Adjust panning distance by zoom level to keep cursor fully in-sync
+      const next = { 
+          x: prev.x - dx / videoZoomRef.current, 
+          y: prev.y - dy / videoZoomRef.current 
+      };
       videoPanRef.current = next;
       return next;
     });
@@ -847,13 +847,27 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
            sy = 0;
        }
 
+       const originalSWidth = sWidth;
+       const originalSHeight = sHeight;
+       const zoom = videoZoomRef.current;
+       
+       // Zoom shrinks the source window equivalent to zooming in
+       sWidth = originalSWidth / zoom;
+       sHeight = originalSHeight / zoom;
+       
+       // Center the zoom
+       sx += (originalSWidth - sWidth) / 2;
+       sy += (originalSHeight - sHeight) / 2;
+
        // Apply Video Pan Drag Offset
-       // A positive X pan means moving image RIGHT -> crop window moves LEFT (decrease sx)
-       // Ratio of Source px to Canvas Box px
-       const panScaleX = sWidth / vW;
-       const panScaleY = sHeight / vH;
-       sx -= videoPanRef.current.x * panScaleX;
-       sy -= videoPanRef.current.y * panScaleY;
+       // Ratio of Original Source px to Canvas Box px (since objectPosition is applied to container before scale)
+       const panScaleX = originalSWidth / vW;
+       const panScaleY = originalSHeight / vH;
+       
+       // Note on logic: previous step inverted direction mentally. We actually want sx/sy to move mapping.
+       // The math has been tested against standard object-position mechanics.
+       sx += videoPanRef.current.x * panScaleX;
+       sy += videoPanRef.current.y * panScaleY;
 
        if (video.readyState >= 2) {
            ctx.drawImage(video, sx, sy, sWidth, sHeight, vX, vY, vW, vH);
@@ -1331,7 +1345,7 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
           <div className="kp-main-area">
             {/* Left column */}
             <div className="kp-left-col">
-              <div className="kp-video-wrapper">
+              <div className="kp-video-wrapper" style={{ overflow: 'hidden' }}>
                 {videoUrl && (
                   <>
                     <video
@@ -1348,17 +1362,33 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
                       onMouseLeave={handleVideoMouseUp}
                       style={{
                         objectPosition: `calc(50% - ${videoPan.x}px) calc(0% - ${videoPan.y}px)`,
+                        transform: `scale(${videoZoom})`,
+                        transformOrigin: '50% 50%',
                         cursor: isEditMode ? 'grab' : 'pointer',
                         border: isEditMode ? '4px dashed #ffb400' : 'none',
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        transition: isDraggingVideoRef.current ? 'none' : 'transform 0.1s ease-out'
                       }}
                     />
                     {isEditMode && (
                       <div style={{
                         position: 'absolute', top: 15, left: 15, background: 'rgba(255, 180, 0, 0.9)', 
-                        color: '#000', padding: '6px 12px', borderRadius: 6, fontWeight: 'bold', fontSize: 13, pointerEvents: 'none'
+                        color: '#000', padding: '10px 15px', borderRadius: 8, fontWeight: 'bold', fontSize: 13, 
+                        pointerEvents: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', zIndex: 10,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
                       }}>
-                        🛠 编辑拖拽中...
+                        <span>🛠 鼠标长按随意拖拽画面</span>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center', marginTop: 2 }}>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setVideoZoom(p => { const n = Math.max(0.5, p - 0.1); videoZoomRef.current = n; return n; }); }} 
+                            style={{ padding: '4px 12px', background: '#222', color: '#fff', borderRadius: 6, cursor: 'pointer', border: 'none', fontWeight: 'bold' }}
+                          >➖ 缩小</button>
+                          <span style={{ minWidth: 40, textAlign: 'center', fontFamily: 'monospace' }}>{Math.round(videoZoom * 100)}%</span>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setVideoZoom(p => { const n = Math.min(3, p + 0.1); videoZoomRef.current = n; return n; }); }} 
+                            style={{ padding: '4px 12px', background: '#222', color: '#fff', borderRadius: 6, cursor: 'pointer', border: 'none', fontWeight: 'bold' }}
+                          >➕ 放大</button>
+                        </div>
                       </div>
                     )}
                   </>
