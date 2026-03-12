@@ -437,6 +437,52 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
   }, []);
 
   // ============================================================
+  // EDIT MODE: Video Pan Dragging (Press 'E' to toggle)
+  // ============================================================
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [videoPan, setVideoPan] = useState({ x: 0, y: 0 });
+  const videoPanRef = useRef({ x: 0, y: 0 });
+  
+  const isDraggingVideoRef = useRef(false);
+  const dragStartPosRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement) return;
+      if (e.key.toLowerCase() === 'e') {
+        setIsEditMode(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleVideoMouseDown = (e: React.MouseEvent) => {
+    if (!isEditMode) return;
+    e.preventDefault();
+    isDraggingVideoRef.current = true;
+    dragStartPosRef.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleVideoMouseMove = (e: React.MouseEvent) => {
+    if (!isEditMode || !isDraggingVideoRef.current) return;
+    const dx = e.clientX - dragStartPosRef.current.x;
+    const dy = e.clientY - dragStartPosRef.current.y;
+    
+    setVideoPan(prev => {
+      const next = { x: prev.x + dx, y: prev.y + dy };
+      videoPanRef.current = next;
+      return next;
+    });
+    
+    dragStartPosRef.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleVideoMouseUp = () => {
+    isDraggingVideoRef.current = false;
+  };
+
+  // ============================================================
   // Apply active/passed classes via direct DOM manipulation
   // (like index.html does) for maximum performance + reliability
   // Also handles: auto-scroll lyrics + vocab card scale animation
@@ -789,8 +835,18 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
            sx = (video.videoWidth - sWidth) / 2;
        } else {
            sHeight = video.videoWidth / boxRatio;
-           sy = (video.videoHeight - sHeight) / 2;
+           sy = (video.videoHeight - sHeight) / 2; // Center default for tall videos if 50% was used, but original was 'top' (0%)
+           // Wait, object-position originally was "center top", so 0 was correct.
+           sy = 0;
        }
+
+       // Apply Video Pan Drag Offset
+       // A positive X pan means moving image RIGHT -> crop window moves LEFT (decrease sx)
+       // Ratio of Source px to Canvas Box px
+       const panScaleX = sWidth / vW;
+       const panScaleY = sHeight / vH;
+       sx -= videoPanRef.current.x * panScaleX;
+       sy -= videoPanRef.current.y * panScaleY;
 
        if (video.readyState >= 2) {
            ctx.drawImage(video, sx, sy, sWidth, sHeight, vX, vY, vW, vH);
