@@ -79,7 +79,7 @@ const KARAOKE_CSS = `
   }
   .kp-lyrics-container {
     flex: 1; padding: 15px; overflow-y: auto; scroll-behavior: smooth;
-    background: #fff; display: block;
+    background: #fff; display: block; position: relative;
   }
   .kp-lyrics-container::-webkit-scrollbar { width: 0px; }
 
@@ -245,7 +245,7 @@ const KARAOKE_CSS = `
 
   .kp-vocab-list {
     flex: 1; padding: 0 12px 15px 12px;
-    overflow-y: auto; scroll-behavior: smooth;
+    overflow-y: auto; scroll-behavior: smooth; position: relative;
     list-style: none; margin: 0; display: flex; flex-direction: column; gap: 10px;
   }
   .kp-vocab-list::-webkit-scrollbar { width: 0px; }
