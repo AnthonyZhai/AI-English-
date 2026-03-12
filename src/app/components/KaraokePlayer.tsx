@@ -470,7 +470,14 @@ export default function KaraokePlayer({ videoFile, timings, analysis }: Props) {
     const dy = e.clientY - dragStartPosRef.current.y;
     
     setVideoPan(prev => {
-      const next = { x: prev.x + dx, y: prev.y + dy };
+      // Subtracting dx/dy so dragging left (negative dx) moves the image left (which requires a positive offset or negative depending on how the CSS is set up. Let's fix the math here).
+      // actually if we subtract dx, when we move left (dx is negative), prev.x - (-dx) = prev.x + |dx|
+      // we want mouse left (dx<0) to move image left.
+      // So if mouse left, we want objectPosition to move left.
+      // objectPosition: calc(50% - videoPan.x px)
+      // therefore to move left we need videoPan.x to INCREASE.
+      // so if dx < 0 (left), we need videoPan.x to increase -> so subtract dx.
+      const next = { x: prev.x - dx, y: prev.y - dy };
       videoPanRef.current = next;
       return next;
     });
